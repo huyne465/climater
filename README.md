@@ -39,7 +39,13 @@ A modern Flutter weather application built with **Clean Architecture**, **MVVM p
 - **✅ Modern**: Industry-standard architecture patterns
 ## DEMO
 
-https://github.com/user-attachments/assets/20f531fe-9558-4d54-8258-1c654316f65d
+
+
+
+https://github.com/user-attachments/assets/eae4c279-b237-4409-a535-33cc953c7492
+
+
+
 
 
 
