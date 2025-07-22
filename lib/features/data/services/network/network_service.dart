@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../error/exceptions.dart';
+import '../../../../core/error/exceptions.dart';
 
 abstract class NetworkService {
   Future<Map<String, dynamic>> get(String url);

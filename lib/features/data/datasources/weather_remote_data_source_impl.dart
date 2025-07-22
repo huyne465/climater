@@ -6,7 +6,7 @@ import 'package:climater/features/data/datasources/weather_remote_data_source.da
 import 'package:climater/core/error/exceptions.dart';
 
 const String _baseURL = 'http://api.weatherapi.com/v1';
-const String _apiKey = '11f5cb485331466cb4341146251707';
+const String _apiKey = '0dc8b445aeb544a99d972515252207';
 
 class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   final http.Client client;

@@ -17,10 +17,16 @@ import 'package:climater/features/data/repositories/location_repository_impl.dar
 import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_current_location.dart';
 
+// Services
+import 'package:climater/features/data/services/weather/weather_service.dart';
+
 class DependencyInjection {
   static void init() {
     // External Dependencies
     Get.put<http.Client>(http.Client());
+
+    // Services
+    Get.put(WeatherService());
 
     // Data Sources
     Get.put<WeatherRemoteDataSource>(
@@ -47,5 +53,7 @@ class DependencyInjection {
         locationRepository: Get.find(),
       ),
     );
+
+    // ViewModels will be registered via Bindings for each route
   }
 }

@@ -1,60 +1,44 @@
-import 'package:get/get.dart';
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_current_location.dart';
+import 'package:climater/features/data/services/weather/weather_service.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
-enum WeatherStatus { initial, loading, success, error }
+enum LoangdingScreenStatus { initial, loading, success, error }
 
-class WeatherController extends GetxController {
-  final GetWeatherByCity _getWeatherByCity;
+class LoadingScreenViewModel extends GetxController {
   final GetWeatherByCurrentLocation _getWeatherByCurrentLocation;
+  final GetWeatherByCity _getWeatherByCity;
+  final WeatherService _weatherService = Get.find<WeatherService>();
 
-  WeatherController({
+  LoadingScreenViewModel({
     required GetWeatherByCity getWeatherByCity,
     required GetWeatherByCurrentLocation getWeatherByCurrentLocation,
   }) : _getWeatherByCity = getWeatherByCity,
        _getWeatherByCurrentLocation = getWeatherByCurrentLocation;
 
-  // Observable variables
-  var isLoading = false.obs;
-  var weather = Rxn<WeatherEntity>();
-  var errorMessage = ''.obs;
-  var weatherHistory = <WeatherEntity>[].obs;
-
-  // Getters for UI convenience
-  bool get hasWeather => weather.value != null;
-  bool get hasError => errorMessage.value.isNotEmpty;
-
-  // Methods
-  Future<void> getWeatherForCurrentLocation() async {
-    isLoading.value = true;
-    errorMessage.value = '';
-
-    final result = await _getWeatherByCurrentLocation();
-
-    result.fold(
-      (failure) {
-        isLoading.value = false;
-        errorMessage.value = failure.message;
-        weather.value = null;
-      },
-      (weatherData) {
-        isLoading.value = false;
-        weather.value = weatherData;
-        errorMessage.value = '';
-        _addToHistory(weatherData);
-      },
-    );
+  @override
+  void onInit() {
+    super.onInit();
+    print('LoadingScreenViewModel initialized');
   }
+
+  // Use WeatherService observables directly
+  bool get isLoading => _weatherService.isLoading.value;
+  String get errorMessage => _weatherService.errorMessage.value;
+  bool get hasWeather => _weatherService.hasWeather;
+  bool get hasError => _weatherService.hasError;
+  WeatherEntity? get weather => _weatherService.currentWeather.value;
+  List<WeatherEntity> get weatherHistory => _weatherService.weatherHistory;
 
   Future<void> getWeatherForCity(String cityName) async {
     if (cityName.trim().isEmpty) {
-      errorMessage.value = 'Tên thành phố không được để trống';
+      _weatherService.setError('Tên thành phố không được để trống');
       return;
     }
 
-    isLoading.value = true;
-    errorMessage.value = '';
+    _weatherService.setLoading(true);
 
     final result = await _getWeatherByCity(
       GetWeatherByCityParams(cityName: cityName.trim()),
@@ -62,39 +46,32 @@ class WeatherController extends GetxController {
 
     result.fold(
       (failure) {
-        isLoading.value = false;
-        errorMessage.value = failure.message;
-        weather.value = null;
+        _weatherService.setLoading(false);
+        _weatherService.setError(failure.message);
       },
       (weatherData) {
-        isLoading.value = false;
-        weather.value = weatherData;
-        errorMessage.value = '';
-        _addToHistory(weatherData);
+        _weatherService.setLoading(false);
+        _weatherService.updateWeather(weatherData);
       },
     );
   }
 
-  void _addToHistory(WeatherEntity weatherData) {
-    // Remove if already exists (to avoid duplicates)
-    weatherHistory.removeWhere((w) => w.cityName == weatherData.cityName);
+  // Methods
+  Future<void> getWeatherForCurrentLocation() async {
+    _weatherService.setLoading(true);
 
-    // Add to beginning of list
-    weatherHistory.insert(0, weatherData);
+    final result = await _getWeatherByCurrentLocation();
 
-    // Keep only last 10 searches
-    if (weatherHistory.length > 10) {
-      weatherHistory.removeRange(10, weatherHistory.length);
-    }
-  }
-
-  void clearError() {
-    errorMessage.value = '';
-  }
-
-  void clearWeather() {
-    weather.value = null;
-    errorMessage.value = '';
+    result.fold(
+      (failure) {
+        _weatherService.setLoading(false);
+        _weatherService.setError(failure.message);
+      },
+      (weatherData) {
+        _weatherService.setLoading(false);
+        _weatherService.updateWeather(weatherData);
+      },
+    );
   }
 
   String getWeatherIcon(String condition) {

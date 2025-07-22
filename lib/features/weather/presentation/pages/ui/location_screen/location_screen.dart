@@ -1,8 +1,13 @@
+import 'package:climater/core/utilities/constants/app_constants.dart';
+import 'package:climater/core/utilities/constants/app_icon_custom.dart';
+import 'package:climater/features/weather/presentation/pages/ui/location_screen/viewModel/location_screen_view_model.dart';
+import 'package:climater/features/weather/presentation/pages/ui/location_screen/widgets/bottomInfo.dart';
+import 'package:climater/features/weather/presentation/pages/ui/location_screen/widgets/detailItem.dart';
+import 'package:climater/features/data/services/weather/weather_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:climater/features/weather/presentation/controllers/weather_controller.dart';
 
-class LocationScreen extends GetView<WeatherController> {
+class LocationScreen extends GetView<LocationViewModel> {
   const LocationScreen({Key? key}) : super(key: key);
 
   @override
@@ -13,11 +18,7 @@ class LocationScreen extends GetView<WeatherController> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue.shade800,
-              Colors.blue.shade600,
-              Colors.lightBlue.shade400,
-            ],
+            colors: [kBlue800, kBlue600, kBlue400],
           ),
         ),
         constraints: const BoxConstraints.expand(),
@@ -27,7 +28,7 @@ class LocationScreen extends GetView<WeatherController> {
               _buildTopSection(),
               _buildWeatherInfo(),
               _buildDetailedInfo(),
-              _buildBottomInfo(),
+              bottomInfoWidget(viewModel: controller),
             ],
           ),
         ),
@@ -43,10 +44,12 @@ class LocationScreen extends GetView<WeatherController> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: IconButton(
-            onPressed: () {
-              controller.getWeatherForCurrentLocation();
-            },
-            icon: const Icon(Icons.near_me, size: 50.0, color: Colors.white),
+            onPressed: () => Get.toNamed('/loading'),
+            icon: IconCustom(
+              iconName: Icons.near_me,
+              size: 50.0,
+              color: kIconWhite,
+            ),
           ),
         ),
         // Go to city search button
@@ -54,10 +57,10 @@ class LocationScreen extends GetView<WeatherController> {
           padding: const EdgeInsets.all(16.0),
           child: IconButton(
             onPressed: () => Get.toNamed('/city'),
-            icon: const Icon(
-              Icons.location_city,
+            icon: IconCustom(
+              iconName: Icons.location_city,
               size: 50.0,
-              color: Colors.white,
+              color: kIconWhite,
             ),
           ),
         ),
@@ -74,24 +77,28 @@ class LocationScreen extends GetView<WeatherController> {
           children: [
             // Temperature display
             Obx(() {
-              if (controller.hasWeather) {
+              final weatherService = Get.find<WeatherService>();
+              final hasWeather = weatherService.hasWeather;
+              final isLoading = weatherService.isLoading.value;
+
+              if (hasWeather) {
                 return Text(
-                  '${controller.weather.value!.temperature.round()}°',
+                  '${weatherService.currentWeather.value!.temperature.round()}°',
                   style: const TextStyle(
                     fontSize: 120,
                     fontWeight: FontWeight.w100,
                     color: Colors.white,
                   ),
                 );
-              } else if (controller.isLoading.value) {
+              } else if (isLoading) {
                 return const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 );
               } else {
-                return const Icon(
-                  Icons.ac_unit,
+                return IconCustom(
+                  iconName: Icons.ac_unit,
                   size: 100,
-                  color: Colors.white,
+                  color: kIconWhite,
                 );
               }
             }),
@@ -100,8 +107,13 @@ class LocationScreen extends GetView<WeatherController> {
 
             // Weather condition and location
             Obx(() {
-              if (controller.hasWeather) {
-                final weather = controller.weather.value!;
+              final weatherService = Get.find<WeatherService>();
+              final hasWeather = weatherService.hasWeather;
+              final hasError = weatherService.hasError;
+              final errorMessage = weatherService.errorMessage.value;
+
+              if (hasWeather) {
+                final weather = weatherService.currentWeather.value!;
                 return Column(
                   children: [
                     Text(
@@ -127,7 +139,7 @@ class LocationScreen extends GetView<WeatherController> {
                     ),
                   ],
                 );
-              } else if (controller.hasError) {
+              } else if (hasError) {
                 return Column(
                   children: [
                     const Icon(
@@ -137,7 +149,7 @@ class LocationScreen extends GetView<WeatherController> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      controller.errorMessage.value,
+                      errorMessage,
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
@@ -158,8 +170,9 @@ class LocationScreen extends GetView<WeatherController> {
 
   Widget _buildDetailedInfo() {
     return Obx(() {
-      if (controller.hasWeather) {
-        final weather = controller.weather.value!;
+      final weatherService = Get.find<WeatherService>();
+      if (weatherService.hasWeather) {
+        final weather = weatherService.currentWeather.value!;
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           padding: const EdgeInsets.all(20),
@@ -170,71 +183,22 @@ class LocationScreen extends GetView<WeatherController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDetailItem(
-                'Cảm giác như',
-                '${weather.feelsLike.round()}°C',
-                Icons.thermostat,
+              detailItemWidget(
+                label: 'Cảm giác như',
+                value: '${weather.feelsLike.round()}°C',
+                icon: Icons.thermostat,
               ),
-              _buildDetailItem(
-                'Độ ẩm',
-                '${weather.humidity.round()}%',
-                Icons.water_drop,
+              detailItemWidget(
+                label: 'Độ ẩm',
+                value: '${weather.humidity.round()}%',
+                icon: Icons.water_drop,
               ),
-              _buildDetailItem(
-                'Gió',
-                '${weather.windSpeed.round()} km/h',
-                Icons.air,
+              detailItemWidget(
+                label: 'Gió',
+                value: '${weather.windSpeed.round()} km/h',
+                icon: Icons.air,
               ),
             ],
-          ),
-        );
-      } else {
-        return Container();
-      }
-    });
-  }
-
-  Widget _buildDetailItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 24),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomInfo() {
-    return Obx(() {
-      if (controller.hasWeather) {
-        final weather = controller.weather.value!;
-        return Container(
-          width: double.infinity,
-          margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            controller.getWeatherMessage(weather.temperature),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
           ),
         );
       } else {

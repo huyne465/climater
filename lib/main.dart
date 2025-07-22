@@ -1,3 +1,4 @@
+import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:climater/core/di/dependency_injection.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Climater - Weather App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: kBlue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       darkTheme: ThemeData.dark(),
