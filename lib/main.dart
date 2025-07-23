@@ -1,13 +1,18 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
+import 'package:climater/features/data/services/weather/weather_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:climater/core/di/dependency_injection.dart';
 import 'package:climater/core/routes/app_pages.dart';
 import 'package:climater/core/routes/app_routes.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   // Initialize dependencies first
-  DependencyInjection.init();
+  configureDependencies();
+
+  // Initialize WeatherService with GetX
+  Get.put(getIt<WeatherService>(), permanent: true);
   runApp(MyApp());
 }
 

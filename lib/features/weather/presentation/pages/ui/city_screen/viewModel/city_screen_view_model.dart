@@ -4,9 +4,11 @@ import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:injectable/injectable.dart';
 
 enum CityScreenStatus { initial, loading, success, error }
 
+@injectable
 class CityScreenViewModel extends GetxController {
   final GetWeatherByCity _getWeatherByCity;
   final WeatherService _weatherService = Get.find<WeatherService>();

@@ -1,6 +1,8 @@
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:get/get.dart';
+import 'package:injectable/injectable.dart';
 
+@singleton
 class WeatherService extends GetxService {
   static WeatherService get to => Get.find();
 

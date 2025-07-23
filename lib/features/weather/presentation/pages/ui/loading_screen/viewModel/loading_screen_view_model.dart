@@ -4,9 +4,11 @@ import 'package:climater/features/domain/usecases/get_weather_by_current_locatio
 import 'package:climater/features/data/services/weather/weather_service.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:injectable/injectable.dart';
 
 enum LoangdingScreenStatus { initial, loading, success, error }
 
+@injectable
 class LoadingScreenViewModel extends GetxController {
   final GetWeatherByCurrentLocation _getWeatherByCurrentLocation;
   final GetWeatherByCity _getWeatherByCity;

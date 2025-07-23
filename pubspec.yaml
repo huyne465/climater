@@ -39,6 +39,8 @@ dependencies:
   get: ^4.6.6
   dartz: ^0.10.1
   flutter_launcher_icons: ^0.14.4
+  injectable: ^2.5.0
+  get_it:
 
 
 flutter_launcher_icons:
@@ -58,6 +60,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+    # add the generator to your dev_dependencies  
+  injectable_generator:  
+  # add build runner if not already added  
+  build_runner: 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

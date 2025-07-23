@@ -4,7 +4,9 @@ import 'package:climater/features/domain/repositories/location_repository.dart';
 import 'package:climater/features/data/datasources/location_remote_data_source.dart';
 import 'package:climater/core/error/failures.dart';
 import 'package:climater/core/error/exceptions.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: LocationRepository)
 class LocationRepositoryImpl implements LocationRepository {
   final LocationRemoteDataSource remoteDataSource;
 

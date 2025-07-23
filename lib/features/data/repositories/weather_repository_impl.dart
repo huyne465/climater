@@ -5,7 +5,9 @@ import 'package:climater/features/domain/repositories/weather_repository.dart';
 import 'package:climater/features/data/datasources/weather_remote_data_source.dart';
 import 'package:climater/core/error/failures.dart';
 import 'package:climater/core/error/exceptions.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: WeatherRepository)
 class WeatherRepositoryImpl implements WeatherRepository {
   final WeatherRemoteDataSource remoteDataSource;
 

@@ -4,10 +4,12 @@ import 'package:climater/features/data/models/weather_model.dart';
 import 'package:climater/features/domain/entities/location_entity.dart';
 import 'package:climater/features/data/datasources/weather_remote_data_source.dart';
 import 'package:climater/core/error/exceptions.dart';
+import 'package:injectable/injectable.dart';
 
 const String _baseURL = 'http://api.weatherapi.com/v1';
 const String _apiKey = '0dc8b445aeb544a99d972515252207';
 
+@Injectable(as: WeatherRemoteDataSource)
 class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   final http.Client client;
 

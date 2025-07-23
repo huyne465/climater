@@ -2,7 +2,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:climater/features/data/models/location_model.dart';
 import 'package:climater/features/data/datasources/location_remote_data_source.dart';
 import 'package:climater/core/error/exceptions.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: LocationRemoteDataSource)
 class LocationRemoteDataSourceImpl implements LocationRemoteDataSource {
   @override
   Future<LocationModel> getCurrentLocation() async {
