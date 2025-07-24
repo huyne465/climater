@@ -1,8 +1,9 @@
+import 'package:climater/features/data/services/Dio/dio_service.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:http/http.dart' as http;
 
 @module
 abstract class RegisterModule {
   @injectable
-  http.Client get httpClient => http.Client();
+  Dio provideDio(DioService dioService) => dioService.dio;
 }

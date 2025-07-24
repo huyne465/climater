@@ -1,38 +1,92 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import '../../../../core/error/exceptions.dart';
 
-abstract class NetworkService {
-  Future<Map<String, dynamic>> get(String url);
-}
+@injectable
+class NetworkService {
+  final Dio _dio;
 
-class NetworkServiceImpl implements NetworkService {
-  final http.Client client;
+  NetworkService(this._dio);
 
-  NetworkServiceImpl({required this.client});
-
-  @override
-  Future<Map<String, dynamic>> get(String url) async {
+  Future<T> get<T>(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
     try {
-      final response = await client.get(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
+      final response = await _dio.get<T>(
+        endpoint,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
       );
+      return response.data!;
+    } on DioException catch (e) {
+      throw HandleDioException(e);
+    }
+  }
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        throw ServerException(
-          message: 'Server error: ${response.statusCode}',
-          statusCode: response.statusCode,
-        );
-      }
-    } catch (e) {
-      if (e is ServerException) {
-        rethrow;
-      } else {
-        throw NetworkException(message: 'Network error: ${e.toString()}');
-      }
+  Future<T> post<T>(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _dio.post<T>(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return response.data!;
+    } on DioException catch (e) {
+      throw HandleDioException(e);
+    }
+  }
+
+  Future<T> put<T>(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _dio.put<T>(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return response.data!;
+    } on DioException catch (e) {
+      throw HandleDioException(e);
+    }
+  }
+
+  Future<T> delete<T>(
+    String endpoint, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _dio.delete<T>(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return response.data!;
+    } on DioException catch (e) {
+      throw HandleDioException(e);
     }
   }
 }

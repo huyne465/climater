@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 class ServerException implements Exception {
   final String message;
   final int? statusCode;
@@ -42,4 +44,24 @@ class InvalidInputException implements Exception {
 
   @override
   String toString() => 'InvalidInputException: $message';
+}
+
+Exception HandleDioException(DioException e) {
+  switch (e.type) {
+    case DioExceptionType.connectionTimeout:
+    case DioExceptionType.sendTimeout:
+    case DioExceptionType.receiveTimeout:
+      return NetworkException(message: e.message ?? 'Connection timeout');
+    case DioExceptionType.badResponse:
+      return ServerException(
+        message: e.message ?? 'Server error',
+        statusCode: e.response?.statusCode,
+      );
+    case DioExceptionType.cancel:
+      return NetworkException(message: 'Request cancelled');
+    case DioExceptionType.connectionError:
+      return NetworkException(message: 'No internet connection');
+    default:
+      return NetworkException(message: e.message ?? 'Unknown network error');
+  }
 }

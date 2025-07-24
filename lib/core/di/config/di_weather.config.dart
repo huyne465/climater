@@ -9,8 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
-import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../../features/data/datasources/location_remote_data_source.dart'
@@ -25,6 +25,8 @@ import '../../../features/data/repositories/location_repository_impl.dart'
     as _i84;
 import '../../../features/data/repositories/weather_repository_impl.dart'
     as _i848;
+import '../../../features/data/services/Dio/dio_service.dart' as _i353;
+import '../../../features/data/services/network/network_service.dart' as _i679;
 import '../../../features/data/services/weather/weather_service.dart' as _i536;
 import '../../../features/domain/repositories/location_repository.dart'
     as _i1072;
@@ -48,7 +50,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
-    gh.factory<_i519.Client>(() => registerModule.httpClient);
+    gh.singleton<_i353.DioService>(() => _i353.DioService());
     gh.singleton<_i536.WeatherService>(() => _i536.WeatherService());
     gh.factory<_i143.LocationRemoteDataSource>(
       () => _i218.LocationRemoteDataSourceImpl(),
@@ -58,8 +60,14 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i143.LocationRemoteDataSource>(),
       ),
     );
+    gh.factory<_i361.Dio>(
+      () => registerModule.provideDio(gh<_i353.DioService>()),
+    );
     gh.factory<_i36.WeatherRemoteDataSource>(
-      () => _i642.WeatherRemoteDataSourceImpl(client: gh<_i519.Client>()),
+      () => _i642.WeatherRemoteDataSourceImpl(dio: gh<_i361.Dio>()),
+    );
+    gh.factory<_i679.NetworkService>(
+      () => _i679.NetworkService(gh<_i361.Dio>()),
     );
     gh.factory<_i827.WeatherRepository>(
       () => _i848.WeatherRepositoryImpl(
