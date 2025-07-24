@@ -1,3 +1,4 @@
+import 'package:climater/core/error/errorHandler.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -93,7 +94,7 @@ class ErrorInterceptor extends Interceptor {
             'Connection timeout. Please check your internet connection.';
         break;
       case DioExceptionType.badResponse:
-        errorMessage = _handleHttpError(err.response?.statusCode);
+        errorMessage = handleHttpError(err.response?.statusCode);
         break;
       case DioExceptionType.cancel:
         errorMessage = 'Request was cancelled';
@@ -120,22 +121,5 @@ class ErrorInterceptor extends Interceptor {
     );
 
     handler.next(customError);
-  }
-
-  String _handleHttpError(int? statusCode) {
-    switch (statusCode) {
-      case 400:
-        return 'Bad request. Please check your input.';
-      case 401:
-        return 'Unauthorized. Invalid API key.';
-      case 404:
-        return 'City not found. Please check the city name.';
-      case 429:
-        return 'Too many requests. Please try again later.';
-      case 500:
-        return 'Server error. Please try again later.';
-      default:
-        return 'HTTP Error: $statusCode';
-    }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:climater/features/domain/repositories/weather_repository.dart';
-import 'package:climater/core/error/failures.dart' hide ResultFuture;
 import 'package:climater/features/domain/usecases/usecase.dart';
 import 'package:injectable/injectable.dart';
 
