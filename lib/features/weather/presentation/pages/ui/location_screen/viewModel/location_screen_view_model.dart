@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_current_location.dart';
@@ -12,7 +13,7 @@ enum LocationScreenStatus { initial, loading, success, error }
 class LocationViewModel extends GetxController {
   final GetWeatherByCurrentLocation _getWeatherByCurrentLocation;
   final GetWeatherByCity _getWeatherByCity;
-  final WeatherService _weatherService = Get.find<WeatherService>();
+  final WeatherService _weatherService = getIt<WeatherService>();
 
   LocationViewModel({
     required GetWeatherByCity getWeatherByCity,
@@ -23,7 +24,6 @@ class LocationViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('LocationViewModel initialized');
   }
 
   // Use WeatherService observables directly

@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:climater/features/weather/presentation/pages/ui/loading_screen/viewModel/loading_screen_view_model.dart';
 import 'package:climater/features/data/services/weather/weather_service.dart';
@@ -12,7 +13,7 @@ class weatherIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final weatherService = Get.find<WeatherService>();
+      final weatherService = getIt<WeatherService>();
 
       if (weatherService.isLoading.value) {
         return CircularProgressIndicator(

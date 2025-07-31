@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:climater/features/weather/presentation/pages/ui/loading_screen/viewModel/loading_screen_view_model.dart';
 import 'package:climater/features/weather/presentation/pages/ui/loading_screen/widgets/navigationButtons.dart';
@@ -7,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoadingScreen extends GetView<LoadingScreenViewModel> {
-  const LoadingScreen({Key? key}) : super(key: key);
-
+  LoadingScreen({Key? key}) : super(key: key);
+  final viewModel = getIt<LoadingScreenViewModel>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,12 +41,12 @@ class LoadingScreen extends GetView<LoadingScreenViewModel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Weather Display Card
-                _buildWeatherCard(controller),
+                _buildWeatherCard(viewModel),
 
                 const SizedBox(height: 40),
 
                 // Action buttons
-                _buildActionButtons(controller),
+                _buildActionButtons(viewModel),
 
                 const SizedBox(height: 30),
 
@@ -59,7 +60,7 @@ class LoadingScreen extends GetView<LoadingScreenViewModel> {
     );
   }
 
-  Widget _buildWeatherCard(LoadingScreenViewModel controller) {
+  Widget _buildWeatherCard(viewModel) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -76,30 +77,30 @@ class LoadingScreen extends GetView<LoadingScreenViewModel> {
       child: Column(
         children: [
           // Weather icon based on status
-          weatherIcon(viewModel: controller),
+          weatherIcon(viewModel: viewModel),
 
           const SizedBox(height: 20),
 
           // Weather info display
-          WeatherInfo(viewModel: controller),
+          WeatherInfo(viewModel: viewModel),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons(LoadingScreenViewModel viewModel) {
+  Widget _buildActionButtons(viewModel) {
     return Column(
       children: [
         // Get current location weather button
         Obx(
           () => _buildActionButton(
-            onPressed: controller.isLoading
+            onPressed: viewModel.isLoading
                 ? null
-                : () => controller.getWeatherForCurrentLocation(),
+                : () => viewModel.getWeatherForCurrentLocation(),
             icon: Icons.my_location,
             label: 'Lấy thời tiết vị trí hiện tại',
             color: kLightBlue600,
-            isLoading: controller.isLoading,
+            isLoading: viewModel.isLoading,
           ),
         ),
 
@@ -108,13 +109,13 @@ class LoadingScreen extends GetView<LoadingScreenViewModel> {
         // Test with Ho Chi Minh City
         Obx(
           () => _buildActionButton(
-            onPressed: controller.isLoading
+            onPressed: viewModel.isLoading
                 ? null
-                : () => controller.getWeatherForCity('Ho Chi Minh City'),
+                : () => viewModel.getWeatherForCity('Ho Chi Minh City'),
             icon: Icons.location_city,
             label: 'Lấy thời tiết TP.HCM',
             color: kBackGroundButtonSearchColor,
-            isLoading: controller.isLoading,
+            isLoading: viewModel.isLoading,
           ),
         ),
 
@@ -123,13 +124,13 @@ class LoadingScreen extends GetView<LoadingScreenViewModel> {
         // Test with Hanoi
         Obx(
           () => _buildActionButton(
-            onPressed: controller.isLoading
+            onPressed: viewModel.isLoading
                 ? null
-                : () => controller.getWeatherForCity('Hanoi'),
+                : () => viewModel.getWeatherForCity('Hanoi'),
             icon: Icons.location_city,
             label: 'Lấy thời tiết Hà Nội',
             color: Colors.green.shade600,
-            isLoading: controller.isLoading,
+            isLoading: viewModel.isLoading,
           ),
         ),
       ],

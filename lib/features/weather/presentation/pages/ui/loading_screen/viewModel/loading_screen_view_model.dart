@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_current_location.dart';
@@ -12,7 +13,7 @@ enum LoangdingScreenStatus { initial, loading, success, error }
 class LoadingScreenViewModel extends GetxController {
   final GetWeatherByCurrentLocation _getWeatherByCurrentLocation;
   final GetWeatherByCity _getWeatherByCity;
-  final WeatherService _weatherService = Get.find<WeatherService>();
+  final WeatherService _weatherService = getIt<WeatherService>();
 
   LoadingScreenViewModel({
     required GetWeatherByCity getWeatherByCity,

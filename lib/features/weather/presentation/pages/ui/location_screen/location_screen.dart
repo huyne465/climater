@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:climater/core/utilities/constants/app_icon_custom.dart';
 import 'package:climater/features/weather/presentation/pages/ui/location_screen/viewModel/location_screen_view_model.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LocationScreen extends GetView<LocationViewModel> {
-  const LocationScreen({Key? key}) : super(key: key);
+  LocationScreen({super.key});
+  final viewModel = getIt<LocationViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class LocationScreen extends GetView<LocationViewModel> {
               _buildTopSection(),
               _buildWeatherInfo(),
               _buildDetailedInfo(),
-              bottomInfoWidget(viewModel: controller),
+              bottomInfoWidget(viewModel: viewModel),
             ],
           ),
         ),
@@ -77,7 +79,7 @@ class LocationScreen extends GetView<LocationViewModel> {
           children: [
             // Temperature display
             Obx(() {
-              final weatherService = Get.find<WeatherService>();
+              final weatherService = getIt<WeatherService>();
               final hasWeather = weatherService.hasWeather;
               final isLoading = weatherService.isLoading.value;
 
@@ -107,7 +109,7 @@ class LocationScreen extends GetView<LocationViewModel> {
 
             // Weather condition and location
             Obx(() {
-              final weatherService = Get.find<WeatherService>();
+              final weatherService = getIt<WeatherService>();
               final hasWeather = weatherService.hasWeather;
               final hasError = weatherService.hasError;
               final errorMessage = weatherService.errorMessage.value;
@@ -117,7 +119,7 @@ class LocationScreen extends GetView<LocationViewModel> {
                 return Column(
                   children: [
                     Text(
-                      controller.getWeatherIcon(weather.condition),
+                      viewModel.getWeatherIcon(weather.condition),
                       style: const TextStyle(fontSize: 80),
                     ),
                     const SizedBox(height: 10),
@@ -170,7 +172,7 @@ class LocationScreen extends GetView<LocationViewModel> {
 
   Widget _buildDetailedInfo() {
     return Obx(() {
-      final weatherService = Get.find<WeatherService>();
+      final weatherService = getIt<WeatherService>();
       if (weatherService.hasWeather) {
         final weather = weatherService.currentWeather.value!;
         return Container(

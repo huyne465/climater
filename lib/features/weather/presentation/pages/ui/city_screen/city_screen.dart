@@ -1,3 +1,4 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:climater/features/weather/presentation/pages/ui/city_screen/viewModel/city_screen_view_model.dart';
 import 'package:climater/features/weather/presentation/pages/ui/city_screen/widgets/backButton.dart';
@@ -15,6 +16,7 @@ class CityScreen extends GetView<CityScreenViewModel> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController cityTextController = TextEditingController();
+    final viewModel = getIt<CityScreenViewModel>();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -34,12 +36,12 @@ class CityScreen extends GetView<CityScreenViewModel> {
               const SizedBox(height: 20),
               titleFindingCity.titleFindingCity(),
               const SizedBox(height: 30),
-              _buildSearchContainer(cityTextController),
+              _buildSearchContainer(cityTextController, viewModel),
               const SizedBox(height: 20),
-              _buildWeatherDisplay(),
+              _buildWeatherDisplay(viewModel),
               const Spacer(),
               quickSearchButton(
-                viewModel: controller,
+                viewModel: viewModel,
                 cityText: cityTextController,
               ),
               const SizedBox(height: 20),
@@ -50,7 +52,10 @@ class CityScreen extends GetView<CityScreenViewModel> {
     );
   }
 
-  Widget _buildSearchContainer(TextEditingController cityTextController) {
+  Widget _buildSearchContainer(
+    TextEditingController cityTextController,
+    viewModel,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20.0),
       padding: const EdgeInsets.all(20.0),
@@ -72,7 +77,7 @@ class CityScreen extends GetView<CityScreenViewModel> {
             controller: cityTextController,
             onSubmitted: (value) {
               if (value.trim().isNotEmpty) {
-                controller.getWeatherForCity(value.trim());
+                viewModel.getWeatherForCity(value.trim());
               }
             },
             style: const TextStyle(fontSize: 20, color: Colors.black87),
@@ -96,18 +101,18 @@ class CityScreen extends GetView<CityScreenViewModel> {
           const SizedBox(height: 20),
 
           // Get Weather button
-          searchButton(viewModel: controller, cityText: cityTextController),
+          searchButton(viewModel: viewModel, cityText: cityTextController),
         ],
       ),
     );
   }
 
-  Widget _buildWeatherDisplay() {
+  Widget _buildWeatherDisplay(viewModel) {
     return Obx(() {
       // Always access .value for observable variables inside Obx
-      final isLoading = controller.isLoading;
-      final hasWeather = controller.weather != null;
-      final hasError = controller.errorMessage.isNotEmpty;
+      final isLoading = viewModel.isLoading;
+      final hasWeather = viewModel.weather != null;
+      final hasError = viewModel.errorMessage.isNotEmpty;
 
       if (!hasWeather && !hasError && !isLoading) {
         return Container();
@@ -130,9 +135,9 @@ class CityScreen extends GetView<CityScreenViewModel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            weatherIcon(viewModel: controller),
+            weatherIcon(viewModel: viewModel),
             const SizedBox(height: 20),
-            WeatherInfo(viewModel: controller),
+            WeatherInfo(viewModel: viewModel),
           ],
         ),
       );

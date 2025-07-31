@@ -32,23 +32,46 @@ class WeatherModel extends WeatherEntity {
        );
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
-    final location = json['location'];
-    final current = json['current'];
+    final location = json['location'] ?? {};
+    final current = (json['current'] is Map<String, dynamic>)
+        ? json['current'] as Map<String, dynamic>
+        : <String, dynamic>{};
+    final condition = (current['condition'] is Map<String, dynamic>)
+        ? current['condition'] as Map<String, dynamic>
+        : <String, dynamic>{};
+
+    double _toDouble(dynamic value, [double defaultValue = 0.0]) {
+      if (value == null) return defaultValue;
+      if (value is num) return value.toDouble();
+      if (value is String) {
+        return double.tryParse(value) ?? defaultValue;
+      }
+      return defaultValue;
+    }
+
+    double _lat = 0.0;
+    double _lon = 0.0;
+    try {
+      _lat = _toDouble(location['lat']);
+    } catch (_) {}
+    try {
+      _lon = _toDouble(location['lon']);
+    } catch (_) {}
 
     return WeatherModel(
-      cityName: location['name'] ?? '',
-      region: location['region'] ?? '',
-      country: location['country'] ?? '',
-      temperature: (current['temp_c'] as num).toDouble(),
-      feelsLike: (current['feelslike_c'] as num).toDouble(),
-      condition: current['condition']['text'] ?? '',
-      conditionIcon: current['condition']['icon'] ?? '',
-      humidity: (current['humidity'] as num).toDouble(),
-      windSpeed: (current['wind_kph'] as num).toDouble(),
-      windDirection: current['wind_dir'] ?? '',
-      latitude: (location['lat'] as num).toDouble(),
-      longitude: (location['lon'] as num).toDouble(),
-      localTime: location['localtime'] ?? '',
+      cityName: location['name']?.toString() ?? '',
+      region: location['region']?.toString() ?? '',
+      country: location['country']?.toString() ?? '',
+      temperature: _toDouble(current['temp_c']),
+      feelsLike: _toDouble(current['feelslike_c']),
+      condition: condition['text']?.toString() ?? 'N/A',
+      conditionIcon: condition['icon']?.toString() ?? '',
+      humidity: _toDouble(current['humidity']),
+      windSpeed: _toDouble(current['wind_kph']),
+      windDirection: current['wind_dir']?.toString() ?? '',
+      latitude: _lat,
+      longitude: _lon,
+      localTime: location['localtime']?.toString() ?? '',
     );
   }
 

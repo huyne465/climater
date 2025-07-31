@@ -1,8 +1,8 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/features/data/services/weather/weather_service.dart';
 import 'package:climater/features/domain/entities/weather_entity.dart';
 import 'package:climater/features/domain/usecases/get_weather_by_city.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,7 +11,7 @@ enum CityScreenStatus { initial, loading, success, error }
 @injectable
 class CityScreenViewModel extends GetxController {
   final GetWeatherByCity _getWeatherByCity;
-  final WeatherService _weatherService = Get.find<WeatherService>();
+  final WeatherService _weatherService = getIt<WeatherService>();
   CityScreenViewModel({required GetWeatherByCity getWeatherByCity})
     : _getWeatherByCity = getWeatherByCity;
 
@@ -79,8 +79,10 @@ class CityScreenViewModel extends GetxController {
       return 'Thời tiết mát mẻ 🍃';
     } else if (temperature > 15) {
       return 'Hơi lạnh, mặc thêm áo nhé 🧥';
-    } else {
+    } else if (temperature <= 15) {
       return 'Trời lạnh! Giữ ấm cơ thể 🧣';
+    } else {
+      return 'Không có dữ liệu nhiệt độ';
     }
   }
 }

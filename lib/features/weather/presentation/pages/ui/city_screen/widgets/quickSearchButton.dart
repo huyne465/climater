@@ -1,16 +1,17 @@
+import 'package:climater/core/di/config/di_weather.dart';
 import 'package:climater/core/utilities/constants/app_constants.dart';
 import 'package:climater/features/weather/presentation/pages/ui/city_screen/viewModel/city_screen_view_model.dart';
 import 'package:flutter/material.dart';
 
 class quickSearchButton extends StatelessWidget {
-  const quickSearchButton({
+  quickSearchButton({
     super.key,
-    required this.viewModel,
     required this.cityText,
+    required CityScreenViewModel viewModel,
   });
 
-  final CityScreenViewModel viewModel;
   final TextEditingController cityText;
+  final viewModel = getIt<CityScreenViewModel>();
 
   @override
   Widget build(BuildContext context) {
